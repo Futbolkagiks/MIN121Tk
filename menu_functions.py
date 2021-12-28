@@ -23,14 +23,23 @@ def Close(the_window):
     return
 
 def showTariffs(window,count=0):
-    for yes in Tariffs.iter_rows(values_only=True):
-        ID=Label(window,text=yes[0],bd=2,bg="grey").grid(column=0,row=count)
-        TariffName=Label(window,text=yes[1],bd=2,bg="grey").grid(column=1,row=count)
-        Data=Label(window,text=yes[2],bd=2,bg="grey").grid(column=2,row=count)
-        Time=Label(window,text=yes[3],bd=2,bg="grey").grid(column=3,row=count)
-        Price=Label(window,text=yes[4],bd=2,bg="grey").grid(column=4,row=count)
+    tree=ttk.Treeview(window,columns=('ID','TN','Data','Time','Price'),show="headings")
+    tree.column('#1',width=80)
+    tree.column('#2',width=80)
+    tree.column('#3',width=80)
+    tree.column('#4',width=80)
+    tree.column('#5',width=80)
+    tree.heading('#1', text='ID')
+    tree.heading('#2', text='Tariff Name')
+    tree.heading('#3', text='Data')
+    tree.heading('#4', text='Time')
+    tree.heading('#5', text='Price')
+    count=0
+    tree.pack()
+    for yes in Tariffs.iter_rows(values_only=True,min_row=2):
+        tree.insert('',count,values=yes)
         count+=1
-    return
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).pack()
 
 def showMyTariff(window,details):
     ActiveT=""
@@ -42,35 +51,57 @@ def showMyTariff(window,details):
     for col in Tariffs.iter_rows(min_col=1,max_col=3,min_row=2,values_only=True):
         if col[0]==details[6]:
             PreviousT=col[1]
-    Lbl1=Label(window,text=f"Your active Tariff is {ActiveT}").grid(column=0,row=0,padx=50)
+    Lbl1=Label(window,text=f"Your active Tariff is {ActiveT}").grid(column=0,row=0,padx=80)
     Lbl2=Label(window,text=f"Your previous Tariff was {PreviousT}").grid(column=0,row=1)
     CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=2)
     
-def users_list(window,type):
+def users_list(window,t):
+    workbook = load_workbook(filename="Users.xlsx")
+    EmployeesSheet = workbook["Employees"]
+    ClientsSheet = workbook["Clients"]
+    VVX = load_workbook(filename="Tariffs.xlsx")
+    Tariffs = VVX["Tariffs"]
+    tree=ttk.Treeview(window,columns=('ID','Name','Login','Fourth','F'),show="headings")
+    tree.column('#1',width=75)
+    tree.column('#2',width=75)
+    tree.column('#3',width=75)
+    tree.column('#4',width=75)
+    tree.column('#5',width=0)
+    tree.heading('#1', text='ID')
+    tree.heading('#2', text='Name')
+    tree.heading('#3', text='Login')
+    tree.heading('#4', text='Balance')
+    if t=='Client':
+        type=ClientsSheet
+    elif t=='Employee':
+        type=EmployeesSheet
+        tree.heading('#4', text='Position')
+        tree.heading('#5', text='Salary')
+        tree.column('#1',width=61)
+        tree.column('#2',width=61)
+        tree.column('#3',width=61)
+        tree.column('#4',width=61)
+        tree.column('#5',width=61)
     count=0
-    for yes in type.iter_rows(values_only=True):
-        ID=Label(window,text=yes[0],bd=2,bg="grey").grid(column=0,row=count)
-        NAME=Label(window,text=yes[1],bd=2,bg="grey").grid(column=1,row=count)
-        LOGIN=Label(window,text=yes[2],bd=2,bg="grey").grid(column=2,row=count)
-        EXTRA=Label(window,text=yes[4],bd=2,bg="grey").grid(column=3,row=count)
+    tree.pack()
+    for yes in type.iter_rows(values_only=True,min_row=2):
+        if t=='Client':
+            user=[yes[0],yes[1],yes[2],yes[4]]
+        elif t=='Employee':
+            user=[yes[0],yes[1],yes[2],yes[4],yes[5]]
+        tree.insert('',count,values=user)
         count+=1
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid()
-    return
-
-def searchClient(window,Search):
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).pack()
+    
+def searchClient(window,Search,tree):
     name=Search.get()
     found=False
     while True:
         for col in ClientsSheet.iter_rows(min_row=2,values_only=True):
             if (name.upper() in col[1].upper())==True:
                 found=True
-                ID=Label(window,text=col[0],bd=2,bg="grey").grid(column=0,row=2)
-                NAME=Label(window,text=col[1],bd=2,bg="grey").grid(column=1,row=2)
-                LOGIN=Label(window,text=col[2],bd=2,bg="grey").grid(column=2,row=2)
-                BALANCE=Label(window,text=col[4],bd=2,bg="grey").grid(column=3,row=2)
-                if col[7]!=None and col[8]!=None:
-                    AGE=Label(window,text=col[7],bd=2,bg="grey").grid(column=4,row=2)
-                    CITY=Label(window,text=col[8],bd=2,bg="grey").grid(column=5,row=2)
+                fc=[col[1],col[2],col[3],col[4],col[7],col[8]]
+                tree.insert('',1,values=fc)
         if found==False:
             messagebox.showinfo("Error", "Client could not be found")
             continue
@@ -78,10 +109,25 @@ def searchClient(window,Search):
             break
 
 def searchClientWindow(window,Search):
+    tree=ttk.Treeview(window,columns=('ID','Name','Login','Balance','Age','Balance'),show="headings")
+    tree.column('#1',width=66)
+    tree.column('#2',width=66)
+    tree.column('#3',width=66)
+    tree.column('#4',width=66)
+    tree.column('#5',width=66)
+    tree.column('#6',width=66)
+    tree.heading('#1', text='ID')
+    tree.heading('#2', text='Name')
+    tree.heading('#3', text='Login')
+    tree.heading('#4', text='Balance')
+    tree.heading('#5', text='Age')
+    tree.heading('#6', text='Balance')
+    tree.grid(columnspan=2,row=2)
     SearchLabel=Label(window,text="Enter the name of a Client").grid(column=0,row=0)
     SearchField=Entry(window,textvariable=Search).grid(column=1,row=0)
-    SearchButton=Button(window,text="Enter",command=lambda w=window,s=Search: searchClient(w,s)).grid(column=0,row=1)
-
+    SearchButton=Button(window,text="Enter",command=lambda w=window,s=Search: searchClient(w,s,tree)).grid(column=0,row=1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=1,row=1)
+    
 def historyUser(window,Search):
     ID=Search.get()
     for col in ClientsSheet.iter_rows(min_row=2,values_only=True):
@@ -92,10 +138,14 @@ def historyUser(window,Search):
 def historyUserWindow(window,Search):
     SearchLabel=Label(window,text="Enter the ID of a Client").grid(column=0,row=0)
     SearchField=Entry(window,textvariable=Search).grid(column=1,row=0)
-    SearchButton=Button(window,text="Enter",command=lambda w=window,s=Search: historyUser(w,s)).grid(column=0,row=1)
+    SearchButton=Button(window,text="Enter",command=lambda w=window,s=Search: historyUser(w,s)).grid(columnspan=2,row=1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=4)
     
 def sortClients(window):
     tree=ttk.Treeview(window,columns=('ID','Name','Age'),show="headings")
+    tree.column('#1',width=133)
+    tree.column('#2',width=133)
+    tree.column('#3',width=133)
     tree.heading('#1', text='ID')
     tree.heading('#2', text='Name')
     tree.heading('#3', text='Age')
@@ -104,6 +154,7 @@ def sortClients(window):
     NameButton=Button(window,text="Name",command=lambda:NameSort(window,tree)).grid(column=1,row=1)
     AgeButton=Button(window,text="Age",command=lambda:AgeSort(window,tree)).grid(column=2,row=1)
     tree.grid(columnspan=3,row=2)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=3,row=3)
     
 def AgeFun():
     gp = pd.read_excel('Users.xlsx',sheet_name="Clients")
@@ -131,28 +182,30 @@ def AgeFun():
     plt.show()
 
 def stats(window):
-    RegionButton=Button(window,text="Region Chart",command=lambda: graf()).grid(column=0,row=0,padx=50)
-    AgeButton=Button(window,text="Age Pie", command=lambda: AgeFun()).grid(column=1,row=0)
+    RegionButton=Button(window,text="Region Chart",command=lambda: graf()).grid(column=0,row=0,padx=150)
+    AgeButton=Button(window,text="Age Pie", command=lambda: AgeFun()).grid(column=0,row=1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=2)
     
 def addBalance(Search,Amount,w):
+    workbook = load_workbook(filename="Users.xlsx")
+    ClientsSheet = workbook["Clients"]
     s=Search.get()
     a=Amount.get()
     count=1
     for col in ClientsSheet.iter_rows(min_row=2,values_only=True):
-        count+=1
         if s==col[0]:
             ClientsSheet[f"E{count}"]=int(col[4])+a
             messagebox.showinfo("Balance","Money has been deposited")
             workbook.save("Users.xlsx")
-    return
-
+        count+=1
+    
 def addBalanceWindow(window,Search,Amount):
     SearchLabel=Label(window,text="Enter the ID of a Client").grid(column=0,row=0)
     SearchField=Entry(window,textvariable=Search).grid(column=1,row=0)
     AmountLabel=Label(window,text="Enter the Amount").grid(column=0,row=1)
     AmountField=Entry(window,textvariable=Amount).grid(column=1,row=1)
-    SearchButton=Button(window,text="Enter",command=lambda s=Search,a=Amount,w=window: addBalance(s,a,w)).grid(column=0,row=2)
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=3)
+    SearchButton=Button(window,text="Enter",command=lambda s=Search,a=Amount,w=window: addBalance(s,a,w)).grid(columnspan=2,row=2)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=3)
     
 def subscribeToNewTariff(window,details,idTariff):
     thefile=pd.DataFrame([details[0],idTariff])
@@ -160,10 +213,10 @@ def subscribeToNewTariff(window,details,idTariff):
     Response=Label(window,text="Your request has been submitted").grid(column=0,row=2)
 
 def subscribeToNewTariffWindow(window,idTariff,details):
-    TariffLabel=Label(window,text="Enter the ID of a Tariff:").grid(column=0,row=0)
+    TariffLabel=Label(window,text="Enter the ID of a Tariff:").grid(column=0,row=0,padx=50)
     TariffField=Entry(window,textvariable=idTariff).grid(column=1,row=0)
-    TariffButton=Button(window,text="Enter", command=lambda w=window, d=details,id=idTariff: subscribeToNewTariff(w,d,id)).grid(column=0,row=1)
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=1)
+    TariffButton=Button(window,text="Enter", command=lambda w=window, d=details,id=idTariff: subscribeToNewTariff(w,d,id)).grid(columnspan=2,row=1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=2)
     showTariffs(window,count=2)
 
 def RequestSubFunction1(id):
@@ -187,7 +240,7 @@ def viewListOfReqest(window):
         ApproveButton=Button(window,text="Approve",command=lambda t="A",qq=q,c=count: analysisRequest(t,qq,c)).grid(column=1,row=count)
         RejectButton=Button(window,text="Reject",command=lambda t="R",qq=q,c=count: analysisRequest(t,qq,c)).grid(column=2,row=count)
         count+=1
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=count+1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=3,row=count+1)
     
 def analysisRequest(t,qq,c):
     workbook=load_workbook(filename="Users.xlsx")
@@ -244,20 +297,26 @@ def graf():
     plt.legend(loc=2)
     plt.show()
 
-def createEmployee(n,l,p):
+def createEmployee(n,l,p,pp):
     workbook=load_workbook(filename="Users.xlsx")
     EmployeesSheet=workbook["Employees"]
     account_type=EmployeesSheet
-    new_account=[int(len(account_type["A"])),n.get(),l.get(),p.get()]
+    new_account=[int(len(account_type["A"])),n.get(),l.get(),p.get(),pp.get(),0]
     account_type.append(new_account)
     workbook.save("Users.xlsx")
+    messagebox.showinfo("User","Employee has been created")
 
-def createEmployeeWindow(window,Login,Password,Name):
-    NameField=Entry(window, textvariable=Name).pack()
-    LoginField=Entry(window, textvariable=Login).pack()
-    PasswordField=Entry(window, textvariable=Password).pack()
-    Label1=Label(window, textvariable="Name").pack(side=NameField.LEFT)
-    Enter_Button = Button(window, text="Enter",command=lambda t="Clients", n=Name,l=Login,p=Password: createEmployee(n,l,p)).pack()
+def createEmployeeWindow(window,Login,Password,Name,Position):
+    NameField=Entry(window, textvariable=Name).grid(column=1,row=0)
+    NameLabel=Label(window,text='Name').grid(column=0,row=0,padx=50)
+    LoginField=Entry(window, textvariable=Login).grid(column=1,row=1)
+    LoginLabel=Label(window,text='Login').grid(column=0,row=1)
+    PasswordField=Entry(window, textvariable=Password).grid(column=1,row=2)
+    PasswordLabel=Label(window,text='Password').grid(column=0,row=2)
+    PositionField=Entry(window, textvariable=Position).grid(column=1,row=3)
+    PositionLabel=Label(window,text='Position').grid(column=0,row=3)
+    Enter_Button = Button(window, text="Enter",command=lambda t="Clients", n=Name,l=Login,p=Password,pp=Position: createEmployee(n,l,p,pp)).grid(columnspan=2,row=4)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=5)
 
 def IDSort(window,tree):
     tree.delete(*tree.get_children())
@@ -294,3 +353,24 @@ def AgeSort(window,tree):
     for i in lst:
         tree.insert('',count,values=i)
         count+=1
+
+def changeSalary(window,ss,id):
+    workbook = load_workbook(filename="Users.xlsx")
+    EmployeesSheet = workbook["Employees"]
+    ID=id.get()
+    Salary=ss.get()
+    count=1
+    for col in EmployeesSheet.iter_rows(min_row=2,values_only=True):
+        if ID==col[0]:
+            EmployeesSheet[f"F{count}"]=Salary
+            messagebox.showinfo("Salary","Salary has been changed")
+            workbook.save("Users.xlsx")
+        count+=1
+    
+def changeSalaryWindow(window,Salary,ID):
+    SearchLabel=Label(window,text="Enter the ID of an Employee").grid(column=0,row=0)
+    SearchField=Entry(window,textvariable=ID).grid(column=1,row=0)
+    AmountLabel=Label(window,text="Enter new Salary").grid(column=0,row=1)
+    AmountField=Entry(window,textvariable=Salary).grid(column=1,row=1)
+    SearchButton=Button(window,text="Enter",command=lambda i=ID,s=Salary,w=window: changeSalary(w,s,i)).grid(columnspan=2,row=2)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=3)
