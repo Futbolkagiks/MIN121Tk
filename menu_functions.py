@@ -8,6 +8,7 @@ import pandas as pd
 from colorama import init, Fore, Back, Style
 from tkinter import *
 from tkinter import messagebox
+from tkinter import ttk
 import numpy as np
 
 
@@ -93,66 +94,17 @@ def historyUserWindow(window,Search):
     SearchField=Entry(window,textvariable=Search).grid(column=1,row=0)
     SearchButton=Button(window,text="Enter",command=lambda w=window,s=Search: historyUser(w,s)).grid(column=0,row=1)
     
-def sortClients():
-    print(
-    'ID - 1\n'
-    'Name - 2\n'
-    'Age - 3\n'
-    'City - 4\n')
-    c = input("Enter by what you wish to sort clients: ")
-    b = pd.read_excel('Users.xlsx',sheet_name="Clients")
-    lst = []
-    for i in range(len(b["Id"])):
-        lst.append([b["Id"][i], b["Name"][i], b["Age"][i], b["City"][i]])
-    if c == '1':
-        lst = sorted(lst, key=lambda x: x[0])
-        for i in lst:
-            print(i)
-    elif c == '2':
-        lst = sorted(lst, key=lambda x: x[1])
-        for i in lst:
-            print(i)
-    elif c == '3':
-        lst = sorted(lst, key=lambda x: x[2])
-        for i in lst:
-            print(i)
-        if input('statik or graphik') == 'stitik':
-            lst = sorted(lst, key=lambda x: x[2])
-            for i in lst:
-                print(i)
-        else:
-            gp = pd.read_excel('Users.xlsx')
-            old = 0
-            jun = 0
-            med = 0
-            for i in range(len(gp['Age'])):
-                if gp['Age'][i] < 18:
-                    jun += 1
-                elif 18 <= gp['Age'][i] < 50:
-                    med += 1
-                else:
-                    old += 1
-            data = [
-                ['Young', jun],
-                ['Mature', med],
-                ['Old', old],
-            ]
-            values = [x[1] for x in data]
-            labels = [x[0] for x in data]
-            fig, ax = plt.subplots()
-            fig.canvas.set_window_title('Inai')
-            ax.set_title("MIN-1-21")
-
-            ax.pie(values, labels=labels, autopct="%.1f%%", radius=1.2)
-
-            ax.set_aspect("equal")
-
-            plt.show()
-    elif c== "4":
-        lst = sorted(lst, key=lambda x: x[3])
-        for i in lst:
-            print(i)
-    return
+def sortClients(window):
+    tree=ttk.Treeview(window,columns=('ID','Name','Age'),show="headings")
+    tree.heading('#1', text='ID')
+    tree.heading('#2', text='Name')
+    tree.heading('#3', text='Age')
+    MainLabel=Label(window,text="Sorting window").grid(columnspan=4,row=0)
+    IDButton=Button(window,text="ID",command=lambda:IDSort(window,tree)).grid(column=0,row=1)
+    NameButton=Button(window,text="Name",command=lambda:NameSort(window,tree)).grid(column=1,row=1)
+    AgeButton=Button(window,text="Age",command=lambda:AgeSort(window,tree)).grid(column=2,row=1)
+    tree.grid(columnspan=3,row=2)
+    
 
 def AgeFun():
     gp = pd.read_excel('Users.xlsx',sheet_name="Clients")
@@ -183,7 +135,6 @@ def stats(window):
     RegionButton=Button(window,text="Region Chart",command=lambda: graf()).grid(column=0,row=0,padx=50)
     AgeButton=Button(window,text="Age Pie", command=lambda: AgeFun()).grid(column=1,row=0)
     
-
 def addBalance(Search,Amount,w):
     s=Search.get()
     a=Amount.get()
@@ -231,14 +182,13 @@ def viewListOfReqest(window):
     count=0
     for row in range(len(thefile['clientId'])):
         q=[(thefile['clientId'][row]),(thefile['tariffId'][row])]
-        print(q)
         infoClient=RequestSubFunction1(q[0])
         infoTariff=RequestSubFunction2(q[1])
         RequestLabel=Label(window,text=f"User {infoClient} wishes to use Tariff {infoTariff}").grid(column=0,row=count)
         ApproveButton=Button(window,text="Approve",command=lambda t="A",qq=q,c=count: analysisRequest(t,qq,c)).grid(column=1,row=count)
         RejectButton=Button(window,text="Reject",command=lambda t="R",qq=q,c=count: analysisRequest(t,qq,c)).grid(column=2,row=count)
         count+=1
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=count+1)
     
 def analysisRequest(t,qq,c):
     workbook=load_workbook(filename="Users.xlsx")
@@ -309,3 +259,39 @@ def createEmployeeWindow(window,Login,Password,Name):
     PasswordField=Entry(window, textvariable=Password).pack()
     Label1=Label(window, textvariable="Name").pack(side=NameField.LEFT)
     Enter_Button = Button(window, text="Enter",command=lambda t="Clients", n=Name,l=Login,p=Password: createEmployee(n,l,p)).pack()
+
+def IDSort(window,tree):
+    tree.delete(*tree.get_children())
+    b = pd.read_excel('Users.xlsx',sheet_name="Clients")
+    lst = []
+    for i in range(len(b["Id"])):
+        lst.append([b["Id"][i], b["Name"][i], b["Age"][i], b["City"][i]])
+    lst = sorted(lst, key=lambda x: x[0])
+    count=0
+    for i in lst:
+        tree.insert('',count,values=i)
+        count+=1
+
+def NameSort(window,tree):
+    tree.delete(*tree.get_children())
+    b = pd.read_excel('Users.xlsx',sheet_name="Clients")
+    lst = []
+    for i in range(len(b["Id"])):
+        lst.append([b["Id"][i], b["Name"][i], b["Age"][i], b["City"][i]])
+    lst = sorted(lst, key=lambda x: x[1])
+    count=0
+    for i in lst:
+        tree.insert('',count,values=i)
+        count+=1
+
+def AgeSort(window,tree):
+    tree.delete(*tree.get_children())
+    b = pd.read_excel('Users.xlsx',sheet_name="Clients")
+    lst = []
+    for i in range(len(b["Id"])):
+        lst.append([b["Id"][i], b["Name"][i], b["Age"][i], b["City"][i]])
+    lst = sorted(lst, key=lambda x: x[2])
+    count=0
+    for i in lst:
+        tree.insert('',count,values=i)
+        count+=1

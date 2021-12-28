@@ -121,7 +121,7 @@ def emps_menu(col):
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
         window.geometry('300x300+550+200')
-        sortClients()
+        sortClients(window)
 
     def clicked07():
         window = Toplevel()
