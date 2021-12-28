@@ -21,8 +21,7 @@ def Close(the_window):
     the_window.destroy()
     return
 
-def showTariffs(window):
-    count=0
+def showTariffs(window,count=0):
     for yes in Tariffs.iter_rows(values_only=True):
         ID=Label(window,text=yes[0],bd=2,bg="grey").grid(column=0,row=count)
         TariffName=Label(window,text=yes[1],bd=2,bg="grey").grid(column=1,row=count)
@@ -42,9 +41,9 @@ def showMyTariff(window,details):
     for col in Tariffs.iter_rows(min_col=1,max_col=3,min_row=2,values_only=True):
         if col[0]==details[6]:
             PreviousT=col[1]
-    Lbl1=Label(window,text=f"Your active Tariff is {ActiveT}").grid(column=0,row=0)
-    Lbl2=Label(window,text=f"Your previous Tariff was {PreviousT}").grid(column=1,row=0)
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=1)
+    Lbl1=Label(window,text=f"Your active Tariff is {ActiveT}").grid(column=0,row=0,padx=50)
+    Lbl2=Label(window,text=f"Your previous Tariff was {PreviousT}").grid(column=0,row=1)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=2)
     
 def users_list(window,type):
     count=0
@@ -155,23 +154,35 @@ def sortClients():
             print(i)
     return
 
+def AgeFun():
+    gp = pd.read_excel('Users.xlsx',sheet_name="Clients")
+    old = 0
+    jun = 0
+    med = 0
+    for i in range(len(gp['Age'])):
+        if gp['Age'][i] < 18:
+            jun += 1
+        elif 18 <= gp['Age'][i] < 50:
+            med += 1
+        else:
+            old += 1
+    data = [
+        ['Young', jun],
+        ['Mature', med],
+        ['Old', old],
+    ]
+    values = [x[1] for x in data]
+    labels = [x[0] for x in data]
+    fig, ax = plt.subplots()
+    fig.canvas.set_window_title('INAI')
+    ax.pie(values, labels=labels, autopct="%.1f%%", radius=1.2)
+    ax.set_aspect("equal")
+    plt.show()
+
 def stats(window):
-    age = []
-    local = []
-    b = pd.read_excel('Users.xlsx',sheet_name="Clients")
-    for i in range(len(b['Age'])):
-        # age.append(b['Age'][i])
-        local.append(b['City'][i])
-    # age1 = set(age)
-    local1 = set(local)
-    lbl=Label(window,text="Stats by Region").pack()
-    for i in local1:
-        q1=local.count(i), i
-        lbl1=Label(window,text=q1).pack()
-    # lbl2=Label(window,text="Stats by Age").pack()
-    # for i in age1:
-    #     q2=age.count(i), i
-    #     lbl3=Label(window,text=q1).pack()
+    RegionButton=Button(window,text="Region Chart",command=lambda: graf()).grid(column=0,row=0,padx=50)
+    AgeButton=Button(window,text="Age Pie", command=lambda: AgeFun()).grid(column=1,row=0)
+    
 
 def addBalance(Search,Amount,w):
     s=Search.get()
@@ -203,6 +214,7 @@ def subscribeToNewTariffWindow(window,idTariff,details):
     TariffField=Entry(window,textvariable=idTariff).grid(column=1,row=0)
     TariffButton=Button(window,text="Enter", command=lambda w=window, d=details,id=idTariff: subscribeToNewTariff(w,d,id)).grid(column=0,row=1)
     CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(column=0,row=1)
+    showTariffs(window,count=2)
 
 def RequestSubFunction1(id):
     for col in ClientsSheet.iter_rows(min_row=2,values_only=True):
@@ -277,7 +289,7 @@ def graf():
             n[6] += 1
         index = np.arange(7)
 
-    plt.title('A Bar Chart')
+    plt.title('Region Chart')
     plt.bar(index, n, error_kw={'ecolor': '0.1', 'capsize': 8}, alpha=0.9, label='Regions')
     plt.xticks(index, ['Osh', 'Batken', 'Jalal-Abad', 'Chuy', 'Issuk-Kul', 'Talas', 'Naryn'])
     plt.legend(loc=2)

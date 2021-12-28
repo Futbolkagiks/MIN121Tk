@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter
 from typing import *
 import csv as v
+from matplotlib.pyplot import text
 from openpyxl import *
 from colorama import init, Fore, Back, Style
 import pandas as pd
@@ -87,39 +88,47 @@ def account_auth(type,ttt,a):
     enterwindow = Toplevel()
     enterwindow.title("MIN-1-21 Project")
     enterwindow.iconbitmap("image.ico")
-    enterwindow.geometry("300x300")
-    LoginField=Entry(enterwindow, textvariable=Login).pack()
-    PasswordField=Entry(enterwindow, textvariable=Password, show='*').pack()
-    Enter_Button = Button(enterwindow, text="Enter",command=lambda t=type,tt=enterwindow,t4=ttt,aa=a: check(t,tt,t4,aa)).pack()
+    enterwindow.geometry('300x300+550+200')
+    AuthLabel=Label(enterwindow,text="Authentication Window").grid(columnspan=2,row=0)
+    LoginField=Entry(enterwindow, textvariable=Login).grid(column=1,row=1)
+    LoginLabel=Label(enterwindow,text="Login").grid(column=0,row=1,padx=50)
+    PasswordField=Entry(enterwindow, textvariable=Password, show='*').grid(column=1,row=2)
+    PasswordLabel=Label(enterwindow,text="Password").grid(column=0,row=2)
+    Enter_Button = Button(enterwindow, text="Enter",command=lambda t=type,tt=enterwindow,t4=ttt,aa=a: check(t,tt,t4,aa)).grid(columnspan=2,row=3)
 
 def type_choice(a):
     authwindow = Toplevel()
-    authwindow.geometry("300x300")
+    authwindow.geometry('300x300+550+200')
     authwindow.title("MIN-1-21 Project")
     authwindow.iconbitmap("image.ico")
+    authwindow.configure(bg='#16C2A1')
     Emp_Button = Button(authwindow, text="Employee", command=lambda ttt=authwindow, m="Employee",aa=a: account_auth(m,ttt,aa))
-    Emp_Button.pack()
+    Emp_Button.grid(column=0,row=0,pady=50,padx=50)
     Cli_Button = Button(authwindow, text="Client", command=lambda ttt=authwindow, m="Client",aa=a: account_auth(m,ttt,aa))
-    Cli_Button.pack()
+    Cli_Button.grid(column=1,row=0)
 
 def reg_client(a):
     enterwindow = Toplevel()
     enterwindow.title("MIN-1-21 Project")
     enterwindow.iconbitmap("image.ico")
-    enterwindow.geometry("300x300")
-    NameField=Entry(enterwindow, textvariable=Name).pack()
-    LoginField=Entry(enterwindow, textvariable=Login).pack()
-    PasswordField=Entry(enterwindow, textvariable=Password).pack()
-    Label1=Label(enterwindow, textvariable="Name").pack(side=NameField.LEFT)
-    Enter_Button = Button(enterwindow, text="Enter",command=lambda t="Clients", w=enterwindow: create_user(t,w)).pack()
+    enterwindow.geometry('300x300+550+200')
+    RegistrationLabel=Label(enterwindow, text="Registration window").grid(columnspan=2,row=0)
+    NameField=Entry(enterwindow, textvariable=Name).grid(column=1,row=1)
+    NameLabel=Label(enterwindow,text="Name").grid(column=0,row=1,padx=50)
+    LoginField=Entry(enterwindow, textvariable=Login).grid(column=1,row=2)
+    LoginLabel=Label(enterwindow,text="Login").grid(column=0,row=2)
+    PasswordField=Entry(enterwindow, textvariable=Password).grid(column=1,row=3)
+    PasswordLabel=Label(enterwindow,text="Password").grid(column=0,row=3)
+    Enter_Button = Button(enterwindow, text="Enter",command=lambda t="Clients", w=enterwindow: create_user(t,w)).grid(columnspan=2,row=4)
 
 def Reg_Auth(root):
     RegAuthwindow=Toplevel()
-    RegAuthwindow.geometry("300x300")
     RegAuthwindow.title("MIN-1-21 Project")
     RegAuthwindow.iconbitmap("image.ico")
+    RegAuthwindow.geometry('300x300+550+200')
+    RegAuthwindow.configure(background='#58D432')
     Reg_Button = Button(RegAuthwindow, text="Registration", command=lambda a=RegAuthwindow: reg_client(a))
-    Reg_Button.pack()
+    Reg_Button.grid(column=0,row=0,pady=50,padx=50)
     Auth_Button = Button(RegAuthwindow, text="Authentication", command=lambda a=RegAuthwindow: type_choice(a))
-    Auth_Button.pack()
+    Auth_Button.grid(column=1,row=0)
 

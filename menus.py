@@ -8,8 +8,8 @@ from menu_functions import *
 from tkinter import *
 from tkinter import messagebox
 
-def exit(root):
-    root.destroy()
+def exit():
+    quit()
 
 def change_account(window):
     
@@ -31,14 +31,14 @@ def users_menu(col):
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
         showMyTariff(window,col)
 
     def clicked2(col):
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
         Balance=Label(window,text=f"Your balance is {col[4]}").pack()
         CloseBtt=Button(window,text="Close",command=lambda w=window: Close(w)).pack()
 
@@ -47,7 +47,7 @@ def users_menu(col):
         idTariff=IntVar(window)
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('450x200+550+200')
         subscribeToNewTariffWindow(window,idTariff,details)
 
     lbl = Label(window, text="- Menu -\n"
@@ -63,7 +63,7 @@ def users_menu(col):
     btn.grid(column=0, row=5)
     btn = Button(window, text="Exit the program", command=lambda: exit())
     btn.grid(column=0, row=6)
-
+    
 def emps_menu(col):
     workbook = load_workbook(filename="Users.xlsx")
     EmployeesSheet = workbook["Employees"]
@@ -83,7 +83,7 @@ def emps_menu(col):
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x720")
+        window.geometry('300x300+550+200')
         users_list(window,ClientsSheet)
 
     def clicked02():
@@ -91,7 +91,7 @@ def emps_menu(col):
         Search=StringVar(window)
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("720x300")
+        window.geometry('300x300+550+200')
         searchClientWindow(window,Search)
 
     def clicked03():
@@ -99,37 +99,36 @@ def emps_menu(col):
         Search=IntVar(window)
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("720x300")
+        window.geometry('300x300+550+200')
         historyUserWindow(window,Search)
 
     def clicked04():
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
         showTariffs(window)
 
     def clicked05():
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
         viewListOfReqest(window)
 
     def clicked06():
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
-        stats()
+        window.geometry('300x300+550+200')
+        sortClients()
 
     def clicked07():
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
         stats(window)
-        graf()
 
     def clicked08():
         window = Toplevel()
@@ -137,7 +136,7 @@ def emps_menu(col):
         Amount=IntVar(window)
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
         addBalanceWindow(window,Search,Amount)
 
     btn = Button(window, text='List of clients', command=lambda: clicked01())
@@ -185,20 +184,20 @@ def dirs_menu(col):
         Name=StringVar(window1)
         window1.title("MIN-1-21 Project")
         window1.iconbitmap("image.ico")
-        window1.geometry("300x720")
+        window1.geometry('300x300+550+200')
         createEmployeeWindow(window1,Login,Password,Name)
 
     def clicked003():
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
 
     def clicked004():
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry("300x300")
+        window.geometry('300x300+550+200')
 
     btn = Button(window, text="Worker list", command=lambda: clicked001())
     btn.grid(column=0, row=2, pady=(10, 0))
