@@ -105,7 +105,6 @@ def sortClients(window):
     AgeButton=Button(window,text="Age",command=lambda:AgeSort(window,tree)).grid(column=2,row=1)
     tree.grid(columnspan=3,row=2)
     
-
 def AgeFun():
     gp = pd.read_excel('Users.xlsx',sheet_name="Clients")
     old = 0

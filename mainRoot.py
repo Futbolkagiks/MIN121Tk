@@ -8,7 +8,6 @@ import pandas as pd
 from tkinter import messagebox
 from auth_defs import *
 
-
 root = Tk()
 root.title("MIN-1-21 Project")
 root.iconbitmap("image.ico")
