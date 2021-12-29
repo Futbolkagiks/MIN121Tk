@@ -19,7 +19,7 @@ def users_menu(col):
     Tariffs = VVX["Tariffs"]
     window = Tk()
     window.title("User's menu")
-    window.geometry('305x250+550+200')
+    window.geometry('400x380+550+200')
     window.resizable(width=False, height=False)
     window.configure(bg='#58D69B')
 
@@ -27,14 +27,14 @@ def users_menu(col):
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry('305x100+550+200')
+        window.geometry('400x250+550+200')
         showMyTariff(window,col)
 
     def clicked2(col):
         window = Toplevel()
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry('305x100+550+200')
+        window.geometry('400x250+550+200')
         Balance=Label(window,text=f"Your balance is {col[4]}").pack(padx=50)
         CloseBtt=Button(window,text="Close",command=lambda w=window: Close(w)).pack()
 
@@ -43,20 +43,30 @@ def users_menu(col):
         idTariff=IntVar(window)
         window.title("MIN-1-21 Project")
         window.iconbitmap("image.ico")
-        window.geometry('305x100+550+200')
+        window.geometry('400x250+550+200')
         subscribeToNewTariffWindow(window,idTariff,details)
+
+    def clicked4(details):
+        window = Toplevel()
+        idTariff=IntVar(window)
+        window.title("MIN-1-21 Project")
+        window.iconbitmap("image.ico")
+        window.geometry('400x250+550+200')
+        addInfoToClientWindow(details,window)
 
     lbl = Label(window, text="- Menu -\n"
                             "Please, select the menu option to work with the program\n", background="#58D69B")
-    lbl.grid(column=0, row=1, pady=(10, 0))
+    lbl.grid(column=0, row=1, pady=(10, 0),padx=60)
     btn = Button(window, text="My Tariff", command=lambda: clicked1(col))
     btn.grid(column=0, row=2, pady=(10, 0))
     btn = Button(window, text="My balance", command=lambda: clicked2(col))
     btn.grid(column=0, row=3)
     btn = Button(window, text="Subscribe to Tariff", command=lambda: clicked3(col))
     btn.grid(column=0, row=4)
-    btn = Button(window, text="Exit the program", command=lambda: exit())
+    btn = Button(window, text="Add info", command=lambda: clicked4(col))
     btn.grid(column=0, row=5)
+    btn = Button(window, text="Exit the program", command=lambda: exit())
+    btn.grid(column=0, row=6)
     
 def emps_menu(col):
     workbook = load_workbook(filename="Users.xlsx")

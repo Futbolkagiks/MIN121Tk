@@ -22,25 +22,23 @@ Name=StringVar()
 Login=StringVar()
 Password=StringVar()
 
-def create_user(type,window,n,l,p):
+def create_user(window,n,l,p):
     workbook=load_workbook(filename="Users.xlsx")
-    EmployeesSheet=workbook["Employees"]
     ClientsSheet=workbook["Clients"]
-    if type=="Clients":
-        account_type=ClientsSheet
-    elif type=="Employees":
-        account_type=EmployeesSheet
     ac1=n.get()
     ac2=l.get()
     ac3=p.get()
     print(ac3,ac1,ac2)
-    new_account=[int(len(account_type["A"])),ac1,ac2,ac3]
-    if ac1!="" or ac2!="" or ac3!="":
-        if login_check_2(account_type,window)==False:
-            account_type.append(new_account)
-        workbook.save("Users.xlsx")
-    else:
+    new_account=[int(len(ClientsSheet["A"])),ac1,ac2,ac3]
+    if (ac1=='') or (ac2=='') or (ac3==''):
         messagebox.showinfo("Error", "One of the fields is not filled in")
+    else:
+        if login_check_2(ClientsSheet,window)==False:
+            ClientsSheet.append(new_account)
+            n.set('')
+            l.set('')
+            p.set('')
+        workbook.save("Users.xlsx")
     
 def login_check_2(type,window):
     LoginCheck=False
@@ -123,13 +121,13 @@ def reg_client(a):
     Login2=StringVar(enterwindow)
     Password3=StringVar(enterwindow)
     RegistrationLabel=Label(enterwindow, text="Registration window").grid(columnspan=2,row=0)
-    NameField=Entry(enterwindow, textvariable=Name).grid(column=1,row=1)
+    NameField=Entry(enterwindow, textvariable=Name1).grid(column=1,row=1)
     NameLabel=Label(enterwindow,text="Name").grid(column=0,row=1,padx=50)
-    LoginField=Entry(enterwindow, textvariable=Login).grid(column=1,row=2)
+    LoginField=Entry(enterwindow, textvariable=Login2).grid(column=1,row=2)
     LoginLabel=Label(enterwindow,text="Login").grid(column=0,row=2)
-    PasswordField=Entry(enterwindow, textvariable=Password).grid(column=1,row=3)
+    PasswordField=Entry(enterwindow, textvariable=Password3).grid(column=1,row=3)
     PasswordLabel=Label(enterwindow,text="Password").grid(column=0,row=3)
-    Enter_Button = Button(enterwindow, text="Enter",command=lambda t="Clients", w=enterwindow: create_user(t,w,Name1,Login2,Password3)).grid(columnspan=2,row=4)
+    Enter_Button = Button(enterwindow, text="Enter",command=lambda w=enterwindow,n=Name1,l=Login2,p=Password3: create_user(w,n,l,p)).grid(columnspan=2,row=4)
 
 def Reg_Auth(root):
     RegAuthwindow=Toplevel()

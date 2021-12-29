@@ -23,7 +23,7 @@ def Close(the_window):
     return
 
 def showTariffs(window,count=0):
-    tree=ttk.Treeview(window,columns=('ID','TN','Data','Time','Price'),show="headings")
+    tree=ttk.Treeview(window,columns=('ID','TN','Data','Time','Price'),show="headings",height=5)
     tree.column('#1',width=80)
     tree.column('#2',width=80)
     tree.column('#3',width=80)
@@ -34,12 +34,12 @@ def showTariffs(window,count=0):
     tree.heading('#3', text='Data')
     tree.heading('#4', text='Time')
     tree.heading('#5', text='Price')
-    count=0
-    tree.pack()
+    d=0
+    tree.grid(columnspan=2,row=count)
     for yes in Tariffs.iter_rows(values_only=True,min_row=2):
-        tree.insert('',count,values=yes)
+        tree.insert('',d,values=yes)
         count+=1
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).pack()
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=count+1)
 
 def showMyTariff(window,details):
     ActiveT=""
@@ -216,7 +216,6 @@ def subscribeToNewTariffWindow(window,idTariff,details):
     TariffLabel=Label(window,text="Enter the ID of a Tariff:").grid(column=0,row=0,padx=50)
     TariffField=Entry(window,textvariable=idTariff).grid(column=1,row=0)
     TariffButton=Button(window,text="Enter", command=lambda w=window, d=details,id=idTariff: subscribeToNewTariff(w,d,id)).grid(columnspan=2,row=1)
-    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=2)
     showTariffs(window,count=2)
 
 def RequestSubFunction1(id):
@@ -258,21 +257,36 @@ def analysisRequest(t,qq,c):
     thefile.drop(c)
     thefile.to_csv("Applications.csv")
 
-def addInfoToClient(details):
-    print("Extra INFO screen")
-    add_info=[input("Enter the city where you live: "), input("Enter your age: ")]
-    count=1
-    for col in ClientsSheet.iter_rows(min_row=2,values_only=True):
-        count+=1
-        if int(details[0])==int(col[0]):
-            ClientsSheet[f"H{count}"]=add_info[1]
-            ClientsSheet[f"I{count}"]=add_info[0]
-            ClientsSheet[f"E{count}"]=0
-            workbook.save("Users.xlsx")
-    print("Extra informations has been saved")
+def addInfoToClient(Age,Region,details):
+    count=2
+    print(details)
+    workbook = load_workbook(filename="Users.xlsx")
+    ClientsSheet = workbook["Clients"]
+    a=Age.get()
+    r=Region.get()
+    if a!=0 or r!="":
+        for col in ClientsSheet.iter_rows(min_row=2,values_only=True):
+            if details[0]==col[0]:
+                ClientsSheet[f"H{count}"]=a
+                ClientsSheet[f"I{count}"]=r
+                workbook.save("Users.xlsx")
+            count+=1
+        messagebox.showinfo("Success", "Extra info has been logged")
+    else:
+        messagebox.showinfo("Error", "One of the fields is not filled in")
+
+def addInfoToClientWindow(details,window):
+    Age=IntVar(window)
+    Region=StringVar(window)
+    AgeField=Entry(window, textvariable=Age).grid(column=1,row=0)
+    AgeLabel=Label(window,text='Age').grid(column=0,row=0,padx=50)
+    RegionField=Entry(window, textvariable=Region).grid(column=1,row=1)
+    RegionLabel=Label(window,text='Region').grid(column=0,row=1)
+    Enter_Button = Button(window, text="Enter",command=lambda :addInfoToClient(Age,Region,details)).grid(columnspan=2,row=2)
+    CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=3)
 
 def graf():
-    gs = pd.read_excel('Users.xlsx')
+    gs = pd.read_excel('Users.xlsx',sheet_name="Clients")
     n = [0, 0, 0, 0, 0, 0, 0, ]
     for i in range(len(gs['City'])):
         if gs['City'][i] == 'Osh':
