@@ -3,14 +3,15 @@ from matplotlib import pyplot as plt
 from pandas.core.algorithms import mode
 from typing import Tuple
 import csv
-from openpyxl import *
+# from openpyxl import *
+from openpyxl import load_workbook
 import pandas as pd
 from colorama import init, Fore, Back, Style
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import numpy as np
-
+from csv import writer
 
 workbook=load_workbook(filename="Users.xlsx")
 EmployeesSheet=workbook["Employees"]
@@ -208,9 +209,14 @@ def addBalanceWindow(window,Search,Amount):
     CloseButton=Button(window,text="Close",command=lambda w=window: Close(w)).grid(columnspan=2,row=3)
     
 def subscribeToNewTariff(window,details,idTariff):
-    thefile=pd.DataFrame([details[0],idTariff])
-    thefile.to_csv("Applications.csv",mode='a',header=False)
-    Response=Label(window,text="Your request has been submitted").grid(column=0,row=2)
+    t=idTariff.get()
+    thefile=[details[0],t]
+    with open('Applications.csv', 'a') as f_object:
+        writer_object = writer(f_object)
+        writer_object.writerow(thefile)
+        f_object.close()
+    # thefile.to_csv("Applications.csv",mode='a',header=False)
+    messagebox.showinfo("Success", "Your request has been submitted")
 
 def subscribeToNewTariffWindow(window,idTariff,details):
     TariffLabel=Label(window,text="Enter the ID of a Tariff:").grid(column=0,row=0,padx=50)
@@ -253,7 +259,9 @@ def analysisRequest(t,qq,c):
                 ClientsSheet[f"G{count}"]=col[5]
                 ClientsSheet[f"F{count}"]=qq[1]
                 workbook.save("Users.xlsx")
-    messagebox.showinfo("Request","Request has been processed")
+        messagebox.showinfo("Success","Request has been approved")
+    elif t=="R":
+        messagebox.showinfo("Success","Request has been rejected")
     thefile.drop(c)
     thefile.to_csv("Applications.csv")
 
@@ -373,7 +381,7 @@ def changeSalary(window,ss,id):
     EmployeesSheet = workbook["Employees"]
     ID=id.get()
     Salary=ss.get()
-    count=1
+    count=2
     for col in EmployeesSheet.iter_rows(min_row=2,values_only=True):
         if ID==col[0]:
             EmployeesSheet[f"F{count}"]=Salary
