@@ -205,5 +205,5 @@ def dirs_menu(col):
     btn.grid(column=0, row=3)
     btn = Button(window, text="Salary", command=lambda: clicked004())
     btn.grid(column=0, row=4)
-    btn = Button(window, text="Exit the program", command=lambda: exit(window))
+    btn = Button(window, text="Exit the program", command=lambda: exit())
     btn.grid(column=0, row=5)    
